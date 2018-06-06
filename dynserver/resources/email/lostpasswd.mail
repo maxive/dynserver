@@ -1,0 +1,20 @@
+{% extends "base.mail" %}
+
+{% block subject %}dynserver: Your password reset request{% endblock %}
+
+{% block content %}
+Hi {{user.username}},
+
+We've heard you lost your dynserver password.
+
+Don't panic, changing your password is simple. Please click the link below to
+set a new password for your account.
+
+{{config.wsgi.protocol}}{{config.wsgi.basename}}/lostpass/recover?username={{user.username}}&authcode={{user.authcode}}
+
+If you did not request a password reset, please use the same link to cancel the
+password reset request.
+
+Sincerely,
+{{config.contact.name}}
+{% endblock %}

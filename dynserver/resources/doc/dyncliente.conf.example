@@ -1,0 +1,23 @@
+
+#
+# Este es un ejemplo de configuración dyncliente
+#
+
+# == Opciones Generales
+daemon=300
+syslog=yes
+mail=root
+mail-failure=root
+ssl=yes
+
+# == Actualizacion del server
+# El NOMBRE DE USUARIO y la CONTRASEÑA a continuación deben reemplazarse con 
+# sus credenciales. DOMAIN1 y DOMAIN2 deben contener los nombres de host como 
+# se especifica en el front-end. Tenga en cuenta que puede haber varios dominios
+# para la misma IP separados con una coma, pero sin espacio.
+ 
+protocol=noip, \
+server=dyn.c4fd.org, \
+login=USERNAME, \
+password=PASSWORD \
+DOMAIN1.dyn.c4fd.org,DOMAIN2.dyn.c4fd.org

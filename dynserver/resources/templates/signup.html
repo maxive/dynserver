@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-md-12"><h1>Signup for an account</h1></div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-7">
+      <p>
+        <strong>dynserver</strong> allows you to add hostnames whose IP address
+        can be updated dynamically using the <a href="http://www.noip.com/integrate">dyndns2 protocol</a>.
+        To use dynserver you have to register for an account using the form on
+        the right.
+      </p>
+      <p>
+        Please specify a username and an email address, where we can send you an
+        activation email to.
+        {% if config.captcha.enabled %}
+        Fill out the captcha, which is needed to prevent automatic registration
+        by spammers.
+        {% endif %}
+        Finally, click the Signup-button and check your inbox.
+      </p>
+      <p>
+        Depending on the system settings and the email address you are using
+        to register for an account, you will receive an email instantly or after
+        an administrator accepts your registration. The email will contain further
+        information as well as an activation code.
+      </p>
+      <p>
+        If you have any trouble with the signup process or you do not receive
+        your activation email in reasonable time, please contact us.
+      </p>
+      <p>
+        <a href="mailto:{{config.contact.email}}">{{config.contact.name}} &lt;{{config.contact.email}}&gt;</a>
+      </p>
+    </div>
+
+    <div class="col-md-5">
+      <div class="box">
+        <form role="form" action="/signup" method="post">
+          <div class="form-group">
+            <label for="inputUsername">Username</label>
+            <div class="input-group">
+              <span  class="input-group-addon"><i class="fa fa-fw fa-user"></i></span>
+              <input class="form-control" type="text" id="inputUsername" placeholder="Username" name="username" required="required">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="inputEmail">Email address</label>
+            <div class="input-group">
+              <span class="input-group-addon"><i class="fa fa-fw fa-envelope"></i></span>
+              <input class="form-control" type="email" id="inputEmail" name="email" placeholder="user@example.com" required="required">
+            </div>
+          </div>
+
+          {% if config.captcha.enabled %}
+          <div class="form-group">
+            <label>Human check</label>
+            <div id="recaptcha_widget">
+              <div class="input-group">
+                <span class="input-group-addon"><i class="fa fa-fw fa-eye"></i></span>
+                <div class="g-recaptcha" data-sitekey="{{config.captcha.recaptcha_public_key}}"></div>
+              </div>
+              <script src='https://www.google.com/recaptcha/api.js'></script>
+              <noscript>Please enable JavaScript to sign up.</noscript>
+            </div>
+          </div>
+          {% endif %}
+
+          <div class="form-group">
+            <button type="submit" class="btn btn-success btn-primary">Signup</button>
+            <a class="btn btn-default" href="/">Go back</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

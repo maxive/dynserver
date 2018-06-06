@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-md-12"><h1>Add a new user</h1></div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <ul class="nav nav-tabs">
+        <li {% if mode == 'all' %}class="active" {% endif %}><a href="/admin/users/all">All Users</a></li>
+        <li {% if mode == 'inactive' %}class="active" {% endif %}><a href="/admin/users/inactive">Awaiting Activation</a></li>
+        <li {% if mode == 'admins' %}class="active" {% endif %}><a href="/admin/users/admins">Administrators</a></li>
+        <li class="active"><a href="/admin/users/add">Add new user</a></li>
+      </ul>
+      <br>
+    </div>
+
+    <div class="col-md-8">
+      <p>
+        You can add new useraccounts manually using this form.
+        Please enter the data for the new user account. The new user will receive
+        an activation email to the specified email address, allowing him to activate
+        his account and to specify a password for logging in.
+      </p>
+    </div>
+
+    <div class="col-md-4">
+      <div class="box">
+        <form role="form" action="/admin/users/add" method="post">
+          <div class="form-group">
+            <label for="inputUsername">Username</label>
+            <div class="input-group">
+              <span class="input-group-addon"><i class="fa fa-fw fa-user"></i></span>
+              <input class="form-control" type="text" id="inputUsername" placeholder="Username" name="username" required="required">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="inputEmail">Email address</label>
+            <div class="input-group">
+              <span class="input-group-addon"><i class="fa fa-fw fa-envelope"></i></span>
+              <input class="form-control" type="email" id="inputEmail" name="email" placeholder="user@example.com" required="required">
+            </div>
+          </div>
+          <div class="form-group">
+            <button type="submit" class="btn btn-success btn-primary">Create</button>
+            <a class="btn btn-default" href="/admin/users/all">Go back</a>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+
+{% endblock %}

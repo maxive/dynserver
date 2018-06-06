@@ -1,0 +1,49 @@
+[db]
+;host = localhost
+;port = 3306
+;name = dynserver
+;username = dynserver
+password = YourDatabasePassword
+
+[logging]
+;verbose = False
+;file = /var/log/dynserver.log
+
+[auth]
+;password_min_chars = 8
+
+[dns]
+;max_hosts = 5
+;ttl = 60
+;reserved =
+;   www
+;   mail
+;   ftp
+;   test
+
+[signup]
+;enabled = True
+;allowed_maildomains = any
+;notify_admin = True
+
+[wsgi]
+;host = 0.0.0.0
+;port = 8080
+;debug = False
+;protocol = http://
+;basename = localhost:8080
+;static_files = /usr/share/dynserver/static
+;pagination_max_items = 25
+
+[smtp]
+host = 127.0.0.1
+;port = 25
+
+[contact]
+name = Administrator
+email = admin@example.com
+
+[captcha]
+;enabled = False
+;recaptcha_public_key = 
+;recaptcha_private_key = 

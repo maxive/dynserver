@@ -1,0 +1,67 @@
+#!/bin/sh
+
+### BEGIN INIT INFO
+# Provides:          dynserver
+# Required-Start:    $network pdns $local_fs
+# Required-Stop:     $network pdns $local_fs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start the dynserver-bundle application
+# Description:       Start the dynserver-bundle application providing the
+#                    dynserver webui and the ddns update interface.
+### END INIT INFO
+
+#
+# Author: Sven Reissmann <sven@0x80.io>
+#
+
+NAME="dynserver"
+DESC="dynamic DNS daemon"
+DAEMON=/usr/local/bin/dynserver-bundle
+DAEMON_ARGS=""
+PIDFILE=/var/run/$NAME.pid
+
+SCRIPTNAME=/etc/init.d/$NAME
+
+# Exit if the package is not installed
+[ -x "$DAEMON" ] || exit 0
+
+# Define LSB log_* functions.
+. /lib/lsb/init-functions
+
+
+do_start() {
+  log_daemon_msg "Starting $DESC" "$NAME"
+
+  start-stop-daemon --start --quiet --oknodo --background \
+    --make-pidfile --pidfile $PIDFILE --exec $DAEMON -- $DAEMON_ARGS
+
+}
+
+do_stop() {
+  log_daemon_msg "Stopping $DESC" "$NAME"
+
+  start-stop-daemon --stop --quiet --oknodo --pidfile $PIDFILE
+}
+
+
+case "$1" in
+  start)
+        do_start
+        ;;
+
+  stop)
+        do_stop
+        ;;
+
+  restart|force-reload)
+        do_stop
+        sleep 1
+        do_start
+        ;;
+
+  *)
+        echo "Usage: /etc/init.d/dynserver {start|stop|restart}"
+        exit 2
+        ;;
+esac

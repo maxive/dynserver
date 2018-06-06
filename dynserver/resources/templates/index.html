@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+  {% if user %}
+    {% if motd %}
+    <div class="alert alert-block alert-warning">
+      <a class="close" data-dismiss="alert" href="#">×</a>
+        <strong>Note:</strong> {{motd|safe}}
+    </div>
+    {% endif %}
+  {% endif %}
+
+  <div class="row">
+    <div class="col-md-12"><h1>Bienvenido a dynserver</h1></div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-8">
+      <p>
+        <strong>dynserver</strong> Es una aplicación del lado del servidor para la gestión dinámica de DNS.
+      </p>
+      <p>
+
+        Le permite especificar nombres de host (subdominios) dentro de una zona DNS
+        dinámica y actualizar la dirección IP de esos nombres de host utilizando un 
+        protocolo de actualización dinámico (<a href="http://www.noip.com/integrate">dyndns2 protocol</a>).
+        
+        Esto le permite acceder a hosts con direcciones IP dinámicas por un nombre de
+        dominio estático, incluso si su dirección IP cambia. Como las actualizaciones
+        de la dirección IP se realizan utilizando el protocolo de actualización dyndns2, 
+        la mayoría de los enrutadores domésticos DSL pueden enviar actualizaciones de 
+        la dirección IP. Además, hay una herramienta llamada <a href="http://sourceforge.net/p/dyncliente/wiki/Home/">dyncliente</a>,
+        , que se puede usar para enviar actualizaciones desde cualquier sistema operativo *NIX
+        
+      <h3>Documentación y soporte</h3>
+      <p>
+        Para obtener más documentación, consulte la página de inicio del proyecto en
+        <a href="http://dynserver.maxive.pe">http://dynserver.maxive.pe</a>.
+      </p>
+      <p>
+          Informe errores o sugiera características para ayudarnos a mejorar ddserver.<br>
+        <a href="https://github.com/dynserver/dynserver/issues">https://github.com/dynserver/dynserver/issues</a>.
+      </p>
+
+      <h3>License</h3>
+      <p>
+        dynserver es software libre: puede redistribuirlo y / o modificarlo según los 
+        términos de la Licencia pública general de Affero de GNU publicada por la Free
+        Software Foundation, ya sea la versión 3 de la licencia o (a su elección) cualquier versión posterior. Consulte http://www.gnu.org/licenses/agpl-3.0.html para obtener el texto completo de la licencia.
+        See <a href="http://www.gnu.org/licenses/agpl-3.0.html">http://www.gnu.org/licenses/agpl-3.0.html</a>
+        para obtener el texto completo de la licencia.
+      </p>
+    </div>
+
+    <div class="col-md-4">
+    {% if not user %}
+      <div class="box">
+        <h3>Iniciar Sessión</h3>
+        <form role="form" action="/login" method="post">
+          <div class="form-group">
+            <div class="input-group">
+              <span class="input-group-addon"><i class="fa fa-fw fa-user"></i></span>
+              <input class="form-control" type="text" id="loginUsername" placeholder="Usuario" name="username" required="required">
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="input-group">
+              <span class="input-group-addon"><i class="fa fa-fw fa-lock"></i></span>
+              <input class="form-control" type="password" id="loginPassword" placeholder="Contraseña" name="password" required="required">
+            </div>
+          </div>
+          <div class="form-group">
+            <button type="submit" class="btn btn-success btn-primary">Iniciar Seción</button>&nbsp;
+            <span class="small"><a href="/lostpass">Olvidaste tu contraseña?</a></span>
+          </div>
+        </form>
+      </div>
+
+      {% if config.signup.enabled %}
+      <div class="box">
+        <h3>Registrate</h3>
+        <p class="text-center">¿quieres usar un DNS dinámico? Registrate Ahora!</p>
+        <p class="text-center"><a class="btn btn-primary" href="/signup">Crea una cuenta</a></p>
+      </div>
+      {% endif %}
+
+    {% else %}
+
+    <div class="box">
+      <p>
+        Tu dirección IP Actual es:
+      </p>
+      <p class="text-center"><strong style="font-size: 2.5em;">{{current_ip}}</strong></p>
+    </div>
+
+    <div class="box">
+      <div class="row">
+        {% if user.maxhosts == 0 %}
+        <p class="text-danger text-center">No tiene permitido agregar ningún nombre de host.</p>
+
+        {% else %}
+        <div class="col-md-6">
+          <canvas id="hostUsageChart" width="140"></canvas>
+          <p class="text-center">
+            Tu estas usando
+            {{userhosts.count}} de
+            {% if user.maxhosts|int == -1 or user.admin == True %}
+              ilimitado
+            {% else %}
+              hasta {% if user.maxhosts == None %}{{config.dns.max_hosts}}{% else %}{{user.maxhosts}}{% endif %}
+            {% endif %}
+            hostnames.
+          </p>
+        </div>
+        <div class="col-md-6">
+          <canvas id="allUsageChart" width="140"></canvas>
+          <p class="text-center">
+            Tu estas usando
+            {% if hosts.count|int %}{{ (userhosts.count / hosts.count * 100)|round|int }}{% else %}0{% endif %}%
+            de un total de hostnames.
+          </p>
+        </div>
+
+        <script type="text/javascript">
+          var dataUser = [
+            {
+              value: {% if user.maxhosts|int == -1 or user.admin == True %}0{% else %}{{userhosts.count}}{% endif %},
+              color:"#cc0000"
+            },
+            {
+              value : {% if user.maxhosts == None %}{{config.dns.max_hosts - userhosts.count}}{% else %}{{user.maxhosts - userhosts.count}}{% endif %},
+              color : "#428bca"
+            }
+          ];
+          var dataAll = [
+            {
+              value: {{userhosts.count}},
+              color:"#cc0000"
+            },
+            {
+              value : {% if hosts.count %}{{hosts.count - userhosts.count}}{% else %}1{% endif %},
+              color : "#428bca"
+            }
+          ];
+          //Get the context of the canvas element we want to select
+          var ctx = $("#hostUsageChart").get(0).getContext("2d");
+          var pc = new Chart(ctx).Pie(dataUser, {segmentStrokeColor : "#f9f9f9"});
+
+          var ctx = $("#allUsageChart").get(0).getContext("2d");
+          var pc = new Chart(ctx).Pie(dataAll, {segmentStrokeColor : "#f9f9f9"});
+        </script>
+        {% endif %}
+      </div>
+    </div>
+    <div class="box">
+      <table class="table table-condensed table-notopborder" style="margin-bottom: 0">
+        <tr>
+          <th>Zonas Disponibles</th>
+          <td>{{zones.count}}</td>
+        </tr>
+        <tr>
+          <th>Total usuarios</th>
+          <td>{{users.count}}</td>
+        </tr>
+        <tr>
+          <th>Total hostnames</th>
+          <td>{{hosts.count}}</td>
+        </tr>
+      </table>
+    </div>
+
+    {% endif %}
+
+    </div>
+
+  </div>
+
+{% endblock %}
