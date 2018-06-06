@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 '''
 Este archivo es parte de dynserver. 
 dynserver es software libre: puede redistribuirlo y/o modificado 
